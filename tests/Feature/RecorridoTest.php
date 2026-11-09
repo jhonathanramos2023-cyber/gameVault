@@ -245,4 +245,13 @@ class RecorridoTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_vista_previa_de_imagenes_esta_presente()
+    {
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+
+        $this->actingAs($colaborador)
+            ->get(route('videojuegos.create'))
+            ->assertSee('data-image-preview');
+    }
 }
