@@ -227,4 +227,22 @@ class RecorridoTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_usuario_inactivo_con_sesion_abierta_es_redirigido()
+    {
+        $usuario = User::factory()->create(['rol' => 'colaborador', 'activo' => true]);
+
+        $this->actingAs($usuario)
+            ->get(route('dashboard'))
+            ->assertOk();
+
+        $usuario->update(['activo' => false]);
+
+        $this->actingAs($usuario)
+            ->get(route('dashboard'))
+            ->assertRedirectToRoute('login')
+            ->assertSessionHas('error', 'Tu cuenta ha sido desactivada.');
+
+        $this->assertGuest();
+    }
 }
