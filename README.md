@@ -1,58 +1,145 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# GameVault
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+GameVault es un catálogo informativo y educativo que documenta videojuegos modificados, copias digitales y proyectos no oficiales (cracks, ROM, ISO, repacks, ports, emulación, reconstrucción/ingeniería inversa, preservación digital). Es un proyecto de cátedra de la Universidad Luterana Salvadoreña (asignatura Proyecto de Aplicaciones Web).
 
-## About Laravel
+**Importante**: GameVault NO aloja, almacena ni distribuye juegos, ejecutables, ROM, ISO ni cracks. Los enlaces son solo referencias documentales con advertencia visible.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Funcionalidades
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Catálogo público**: Consulta de videojuegos publicados con búsqueda por título/palabras clave, filtros por categoría, plataforma, formato y tipo de proyecto, y paginación.
+- **Fichas detalladas**: Información técnica, requisitos conocidos, plataformas, imágenes, advertencias editoriales y referencias externas documentales.
+- **Flujo editorial**: Colaboradores crean borradores → envían a revisión → administrador publica o devuelve → puede despublicar o retirar.
+- **Gestión de contenido**: CRUD de videojuegos, categorías, plataformas, imágenes y referencias.
+- **Gestión de usuarios**: Solo el administrador crea cuentas de colaborador y puede activar/desactivar cuentas.
+- **Seguridad**: Usuarios inactivos no pueden iniciar sesión ni continuar con sesión abierta.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tecnologías
 
-## Learning Laravel
+- **Backend**: Laravel (última versión compatible con PHP 8.3)
+- **Frontend**: Blade, HTML5, CSS, JavaScript, Bootstrap 5
+- **Autenticación**: Laravel Breeze (stack Blade)
+- **Base de datos**: Compatible con PostgreSQL, MySQL/MariaDB y SQLite
+- **Pruebas**: PHPUnit con SQLite en memoria
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Instalación y Ejecución Local
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Requisitos Previos
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- PHP 8.3 o superior
+- Composer
+- Node.js y npm
+- SQLite (por defecto) o PostgreSQL/MySQL
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Instalación
 
 ```bash
-composer require laravel/boost --dev
+# Clonar el repositorio
+git clone <repositorio>
+cd GameVault
 
-php artisan boost:install
+# Instalar dependencias de PHP
+composer install
+
+# Copiar archivo de entorno
+cp .env.example .env
+
+# Generar clave de aplicación
+php artisan key:generate
+
+# Ejecutar migraciones y seeders
+php artisan migrate --seed
+
+# Crear enlace de almacenamiento
+php artisan storage:link
+
+# Instalar dependencias de JavaScript
+npm install
+
+# Compilar assets
+npm run build
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Configuración de Base de Datos
 
-## Contributing
+El proyecto funciona con SQLite por defecto. Para usar PostgreSQL o MySQL, modifica el archivo `.env`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**SQLite (por defecto)**:
+```env
+DB_CONNECTION=sqlite
+# DB_DATABASE no es necesario para SQLite
+```
 
-## Code of Conduct
+**PostgreSQL**:
+```env
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=gamevault
+DB_USERNAME=postgres
+DB_PASSWORD=tu_contraseña
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**MySQL/MariaDB**:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=gamevault
+DB_USERNAME=root
+DB_PASSWORD=tu_contraseña
+```
 
-## Security Vulnerabilities
+### Ejecución
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# Iniciar servidor de desarrollo
+php artisan serve
+```
 
-## License
+La aplicación estará disponible en `http://localhost:8000`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Ejecutar Tests
+
+```bash
+# Ejecutar todos los tests
+php artisan test
+
+# Ejecutar tests con cobertura (opcional)
+php artisan test --coverage
+```
+
+## Credenciales de Prueba (Solo Local)
+
+**Administrador**:
+- Email: `admin@gamevault.local`
+- Contraseña: `GameVaultAdmin2026!`
+
+**Colaboradores** (solo en entorno local, no en producción):
+- Colaborador 1: `colaborador1@gamevault.local` / `GameVaultLocal2026!`
+- Colaborador 2: `colaborador2@gamevault.local` / `GameVaultLocal2026!`
+
+**Nota**: En producción, el administrador debe definir `ADMIN_PASSWORD` en el archivo `.env` antes de ejecutar `php artisan migrate --seed`.
+
+## Créditos
+
+### Recursos Externos
+
+- **Laravel**: Framework PHP
+- **Laravel Breeze**: Sistema de autenticación
+- **Bootstrap 5**: Framework CSS
+
+### Herramientas de IA Utilizadas
+
+- **Replit Agent**: Desarrollo inicial del proyecto
+- **Cursor**: Edición y corrección de código
+- **Claude (Anthropic)**: Asistencia en desarrollo, debugging y documentación
+
+## Documentación
+
+- **Especificación**: `docs/ESPECIFICACION.md` - Especificación completa del proyecto
+- **Manual**: `MANUAL.md` - Manual de instalación y uso paso a paso
+- **Mapa RF**: `docs/MAPA_RF.md` - Relación entre requerimientos funcionales y rutas/controladores
+
+## Licencia
+
+Este es un proyecto académico de la Universidad Luterana Salvadoreña.
