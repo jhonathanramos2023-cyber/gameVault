@@ -170,6 +170,26 @@ class GameVaultTest extends TestCase
         $this->get(route('usuarios.index'))->assertForbidden();
     }
 
+    public function test_search_is_case_insensitive(): void
+    {
+        $categoria = Categoria::factory()->create();
+        Videojuego::factory()->create([
+            'titulo' => 'Proyecto ScummVM',
+            'estado' => 'publicado',
+            'categoria_id' => $categoria->id,
+        ]);
+
+        $this->get(route('catalogo.index', ['q' => 'scummvm']))
+            ->assertOk()
+            ->assertSee('Proyecto ScummVM');
+        $this->get(route('catalogo.index', ['q' => 'SCUMMVM']))
+            ->assertOk()
+            ->assertSee('Proyecto ScummVM');
+        $this->get(route('catalogo.index', ['q' => 'ScUmMvM']))
+            ->assertOk()
+            ->assertSee('Proyecto ScummVM');
+    }
+
     private function datosVideojuego(Categoria $categoria, Plataforma $plataforma): array
     {
         return [

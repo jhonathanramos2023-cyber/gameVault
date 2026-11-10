@@ -21,6 +21,14 @@ class VideojuegoController extends Controller
             $consulta->where('user_id', auth()->id());
         }
 
+        if ($busqueda = trim((string) request()->query('q'))) {
+            $patron = '%'.$busqueda.'%';
+            $consulta->where(function ($q) use ($patron): void {
+                $q->whereRaw('LOWER(titulo) LIKE LOWER(?)', [$patron])
+                    ->orWhereRaw('LOWER(descripcion) LIKE LOWER(?)', [$patron]);
+            });
+        }
+
         return view('videojuegos.index', ['videojuegos' => $consulta->paginate(15)]);
     }
 
