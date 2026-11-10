@@ -11,6 +11,10 @@ mkdir -p storage/framework/views
 mkdir -p storage/logs
 chmod -R 775 storage bootstrap/cache
 
+# Crear enlace simbólico de storage
+echo "Creando enlace simbólico de storage..."
+php artisan storage:link --force
+
 # Ajustar puerto de Apache antes de migrar
 echo "Configurando puerto de Apache..."
 export APACHE_RUN_USER=www-data
