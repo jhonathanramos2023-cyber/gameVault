@@ -1,4 +1,5 @@
 import 'bootstrap';
+import './matrix.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const selector = document.querySelector('[data-image-preview]');
