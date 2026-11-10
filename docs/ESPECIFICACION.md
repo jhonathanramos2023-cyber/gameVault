@@ -104,7 +104,7 @@ docs/MAPA_RF.md: tabla que relacione cada RF01â€“RF25 con su ruta, controlador y
 
 ## 14. Estilo visual
 
-Tema oscuro tipo videojuego con acentos cian #00e5ff y dorado #ffc83d, tarjetas con borde sutil, tipografÃ­a clara, totalmente responsivo. (El estilo se cambiarÃ¡ mÃ¡s adelante; no modificarlo durante las correcciones de errores.)
+Tema oscuro hacker/pirata underground con estética de videojuego prohibido. Paleta: fondo #020a02, verde matrix #00ff41, verde oscuro #0b3d0b, rojo #ff2a2a, ámbar #ffb000. Tipografías: Orbitron para títulos y Share Tech Mono para texto terminal. Efectos: lluvia de unos y ceros (Matrix), glitch en títulos, neón con text-shadow y box-shadow, scanlines, paneles de cristal con backdrop-filter, animaciones de entrada. Zona verde: catálogo, login, registros, categorías, plataformas, referencias. Zona roja: panel y colaboradores. Fondo dinámico por sección con imágenes de public/img/fondos/ (principal, login, panel, registros, categorias, colaboradores, referencias). Responsive con efectos reducidos en móvil (375px) y soporte para prefers-reduced-motion.
 
 ## 15. VerificaciÃ³n final (obligatoria)
 
