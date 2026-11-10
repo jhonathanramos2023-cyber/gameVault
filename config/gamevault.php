@@ -2,6 +2,8 @@
 
 return [
     'image_disk' => env('GAMEVAULT_IMAGE_DISK', 'local'),
+    'admin_email' => env('ADMIN_EMAIL'),
+    'admin_password' => env('ADMIN_PASSWORD'),
     'advertencia' => 'Las referencias externas pertenecen a terceros. GameVault no analiza ni certifica la seguridad, legalidad ni disponibilidad de sus sitios y archivos, y no ofrece asesoría legal.',
     'estados' => ['borrador', 'en_revision', 'publicado', 'retirado'],
     'formatos' => ['crack/modificación', 'ROM', 'imagen ISO', 'repack', 'port o adaptación', 'emulación', 'reconstrucción/ingeniería inversa', 'preservación digital', 'otro'],

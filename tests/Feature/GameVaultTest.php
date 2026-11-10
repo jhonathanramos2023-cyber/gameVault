@@ -336,12 +336,34 @@ class GameVaultTest extends TestCase
 
     public function test_database_seeder_requires_admin_email_in_production(): void
     {
-        // Verificar que el código de DatabaseSeeder contiene la validación de ADMIN_EMAIL en producción
-        $seederContent = file_get_contents(database_path('seeders/DatabaseSeeder.php'));
-        $this->assertStringContainsString('Define ADMIN_EMAIL en producción antes de sembrar el administrador', $seederContent);
-        // Verificar que NO esté comentado
-        $this->assertStringNotContainsString('// Define ADMIN_EMAIL en producción', $seederContent);
-        $this->assertStringContainsString('isProduction()', $seederContent);
+        $originalEnv = $this->app['env'];
+        $originalAdminEmail = config('gamevault.admin_email');
+        $originalAdminPassword = config('gamevault.admin_password');
+
+        try {
+            // Forzar entorno de producción
+            $this->app['env'] = 'production';
+
+            // ADMIN_PASSWORD definido, ADMIN_EMAIL vacío
+            config([
+                'gamevault.admin_password' => 'test_password',
+                'gamevault.admin_email' => '',
+            ]);
+
+            $seeder = new \Database\Seeders\DatabaseSeeder();
+            $seeder->setContainer($this->app);
+
+            $this->expectException(\RuntimeException::class);
+            $this->expectExceptionMessage('Define ADMIN_EMAIL en producción antes de sembrar el administrador.');
+
+            $seeder->run();
+        } finally {
+            $this->app['env'] = $originalEnv;
+            config([
+                'gamevault.admin_email' => $originalAdminEmail,
+                'gamevault.admin_password' => $originalAdminPassword,
+            ]);
+        }
     }
 
     private function datosVideojuego(Categoria $categoria, Plataforma $plataforma): array

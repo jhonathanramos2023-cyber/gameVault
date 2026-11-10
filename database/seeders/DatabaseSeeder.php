@@ -28,8 +28,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminPassword = env('ADMIN_PASSWORD');
-        $adminEmail = env('ADMIN_EMAIL');
+        $adminPassword = config('gamevault.admin_password');
+        $adminEmail = config('gamevault.admin_email');
 
         if ($this->isProduction()) {
             if (blank($adminEmail)) {
