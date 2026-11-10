@@ -543,3 +543,55 @@ body[data-fondo="colaboradores"] .pagination {
 .detail-image:hover {
  transform: scale(1.05);
 }
+
+.login-panel {
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--gv-green);
+    box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+}
+.typewriter-title {
+    overflow: hidden;
+    border-right: 3px solid var(--gv-green);
+    white-space: nowrap;
+    animation: typingTitle 2s steps(20, end), blink 0.75s step-end infinite;
+}
+@keyframes typingTitle {
+    from { width: 0; }
+    to { width: 100%; }
+}
+.login-panel.shake {
+    animation: shake 0.5s ease-in-out;
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+.gv-panel {
+    backdrop-filter: blur(10px);
+}
+body[data-fondo="panel"] .gv-panel,
+body[data-fondo="colaboradores"] .gv-panel {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 42, 42, 0.3);
+}
+.btn-cyan:active {
+    animation: ripple 0.3s ease;
+}
+@keyframes ripple {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+.gv-main {
+    animation: fadeIn 0.5s ease, scanIn 0.8s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes scanIn {
+    from { transform: translateY(20px); }
+    to { transform: translateY(0); }
+}
+
