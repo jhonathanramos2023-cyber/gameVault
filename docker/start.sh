@@ -36,5 +36,9 @@ echo "Optimizando configuración y vistas..."
 php artisan config:cache
 php artisan view:cache
 
+# Asegurar permisos después de caché
+echo "Ajustando permisos de storage..."
+chown -R www-data:www-data storage bootstrap/cache
+
 echo "=== Iniciando Apache en puerto $PORT ==="
 apache2-foreground
