@@ -38,8 +38,9 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        $seedDemo = env('GAMEVAULT_SEED_DEMO', ! app()->environment('production'));
         $colaboradores = collect();
-        if (! app()->environment('production')) {
+        if ($seedDemo) {
             foreach ([
                 ['nombre' => 'Colaborador Uno', 'correo' => 'colaborador1@gamevault.local'],
                 ['nombre' => 'Colaborador Dos', 'correo' => 'colaborador2@gamevault.local'],
@@ -92,47 +93,49 @@ class DatabaseSeeder extends Seeder
             ['Luanti', 'https://www.luanti.org/', 'Motores y adaptación', 'otro', 'otro', ['Windows', 'Linux', 'macOS', 'Android'], 'Motor abierto de juegos voxel y plataforma comunitaria de creación.'],
         ];
 
-        foreach ($proyectos as [$titulo, $url, $categoriaNombre, $formato, $tipo, $nombresPlataformas, $descripcion]) {
-            $slug = Str::slug($titulo);
-            $videojuego = Videojuego::updateOrCreate(
-                ['slug' => $slug],
-                [
-                    'titulo' => $titulo,
-                    'descripcion' => $descripcion,
-                    'informacion_tecnica' => 'Proyecto de software abierto; consulta su sitio oficial para información técnica actualizada.',
-                    'requisitos_conocidos' => 'Los requisitos pueden cambiar según la versión y plataforma.',
-                    'formato' => $formato,
-                    'tipo_proyecto' => $tipo,
-                    'estado' => 'publicado',
-                    'advertencia' => config('gamevault.advertencia'),
-                    'fecha_lanzamiento' => null,
-                    'categoria_id' => $categorias[$categoriaNombre]->id,
-                    'user_id' => $admin->id,
-                ]
-            );
-            $videojuego->plataformas()->sync(collect($nombresPlataformas)->map(fn ($nombre) => $plataformas[$nombre]->id)->all());
+        if ($seedDemo) {
+            foreach ($proyectos as [$titulo, $url, $categoriaNombre, $formato, $tipo, $nombresPlataformas, $descripcion]) {
+                $slug = Str::slug($titulo);
+                $videojuego = Videojuego::updateOrCreate(
+                    ['slug' => $slug],
+                    [
+                        'titulo' => $titulo,
+                        'descripcion' => $descripcion,
+                        'informacion_tecnica' => 'Proyecto de software abierto; consulta su sitio oficial para información técnica actualizada.',
+                        'requisitos_conocidos' => 'Los requisitos pueden cambiar según la versión y plataforma.',
+                        'formato' => $formato,
+                        'tipo_proyecto' => $tipo,
+                        'estado' => 'publicado',
+                        'advertencia' => config('gamevault.advertencia'),
+                        'fecha_lanzamiento' => null,
+                        'categoria_id' => $categorias[$categoriaNombre]->id,
+                        'user_id' => $admin->id,
+                    ]
+                );
+                $videojuego->plataformas()->sync(collect($nombresPlataformas)->map(fn ($nombre) => $plataformas[$nombre]->id)->all());
 
-            $ruta = 'placeholders/'.$slug.'.svg';
-            $texto = 'Ilustración tipográfica generada por código para '.$titulo;
-            $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680"><defs><linearGradient id="f" x2="1" y2="1"><stop stop-color="#0b2232"/><stop offset="1" stop-color="#26331e"/></linearGradient></defs><rect width="1200" height="680" fill="url(#f)"/><circle cx="920" cy="150" r="260" fill="#00e5ff" opacity=".14"/><path d="M0 540 450 280l310 210 240-150 200 120v220H0Z" fill="#ffc83d" opacity=".12"/><text x="80" y="330" fill="#00e5ff" font-family="Arial,sans-serif" font-size="30" letter-spacing="12">GAMEVAULT · ARCHIVO ABIERTO</text><text x="80" y="430" fill="#eaf3fa" font-family="Arial,sans-serif" font-size="66" font-weight="700">'.htmlspecialchars($titulo, ENT_QUOTES | ENT_XML1, 'UTF-8').'</text></svg>';
-            Storage::disk(config('gamevault.image_disk'))->put($ruta, $svg);
-            ImagenVideojuego::updateOrCreate(
-                ['videojuego_id' => $videojuego->id, 'ruta' => $ruta],
-                ['texto_alternativo' => $texto, 'orden' => 0]
-            );
+                $ruta = 'placeholders/'.$slug.'.svg';
+                $texto = 'Ilustración tipográfica generada por código para '.$titulo;
+                $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680"><defs><linearGradient id="f" x2="1" y2="1"><stop stop-color="#0b2232"/><stop offset="1" stop-color="#26331e"/></linearGradient></defs><rect width="1200" height="680" fill="url(#f)"/><circle cx="920" cy="150" r="260" fill="#00e5ff" opacity=".14"/><path d="M0 540 450 280l310 210 240-150 200 120v220H0Z" fill="#ffc83d" opacity=".12"/><text x="80" y="330" fill="#00e5ff" font-family="Arial,sans-serif" font-size="30" letter-spacing="12">GAMEVAULT · ARCHIVO ABIERTO</text><text x="80" y="430" fill="#eaf3fa" font-family="Arial,sans-serif" font-size="66" font-weight="700">'.htmlspecialchars($titulo, ENT_QUOTES | ENT_XML1, 'UTF-8').'</text></svg>';
+                Storage::disk(config('gamevault.image_disk'))->put($ruta, $svg);
+                ImagenVideojuego::updateOrCreate(
+                    ['videojuego_id' => $videojuego->id, 'ruta' => $ruta],
+                    ['texto_alternativo' => $texto, 'orden' => 0]
+                );
 
-            Referencia::updateOrCreate(
-                ['videojuego_id' => $videojuego->id, 'titulo' => 'Sitio oficial del proyecto'],
-                [
-                    'url' => $url,
-                    'tipo_fuente' => 'Sitio oficial',
-                    'observaciones' => 'Referencia informativa oficial; GameVault no verifica archivos ni disponibilidad.',
-                    'fecha_consulta' => now()->toDateString(),
-                ]
-            );
+                Referencia::updateOrCreate(
+                    ['videojuego_id' => $videojuego->id, 'titulo' => 'Sitio oficial del proyecto'],
+                    [
+                        'url' => $url,
+                        'tipo_fuente' => 'Sitio oficial',
+                        'observaciones' => 'Referencia informativa oficial; GameVault no verifica archivos ni disponibilidad.',
+                        'fecha_consulta' => now()->toDateString(),
+                    ]
+                );
+            }
         }
 
-        if (! app()->environment('production') && $colaboradores->count() !== 2) {
+        if ($seedDemo && $colaboradores->count() !== 2) {
             throw new RuntimeException('No se pudieron preparar las cuentas locales de colaboradores.');
         }
     }
