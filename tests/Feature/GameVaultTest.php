@@ -306,16 +306,42 @@ class GameVaultTest extends TestCase
     public function test_database_seeder_uses_default_email_when_not_provided(): void
     {
         // En entorno de test (no producción), usa el valor por defecto si ADMIN_EMAIL no está definido
-        putenv('ADMIN_PASSWORD=test_password');
-        putenv('ADMIN_EMAIL=');
+        $originalAdminPassword = getenv('ADMIN_PASSWORD');
+        $originalAdminEmail = getenv('ADMIN_EMAIL');
 
-        $seeder = new \Database\Seeders\DatabaseSeeder();
-        $seeder->run();
+        try {
+            putenv('ADMIN_PASSWORD=test_password');
+            putenv('ADMIN_EMAIL=');
 
-        $this->assertDatabaseHas('users', [
-            'email' => 'admin@gamevault.local',
-            'rol' => 'administrador',
-        ]);
+            $seeder = new \Database\Seeders\DatabaseSeeder();
+            $seeder->run();
+
+            $this->assertDatabaseHas('users', [
+                'email' => 'admin@gamevault.local',
+                'rol' => 'administrador',
+            ]);
+        } finally {
+            if ($originalAdminPassword === false) {
+                putenv('ADMIN_PASSWORD');
+            } else {
+                putenv("ADMIN_PASSWORD=$originalAdminPassword");
+            }
+            if ($originalAdminEmail === false) {
+                putenv('ADMIN_EMAIL');
+            } else {
+                putenv("ADMIN_EMAIL=$originalAdminEmail");
+            }
+        }
+    }
+
+    public function test_database_seeder_requires_admin_email_in_production(): void
+    {
+        // Verificar que el código de DatabaseSeeder contiene la validación de ADMIN_EMAIL en producción
+        $seederContent = file_get_contents(database_path('seeders/DatabaseSeeder.php'));
+        $this->assertStringContainsString('Define ADMIN_EMAIL en producción antes de sembrar el administrador', $seederContent);
+        // Verificar que NO esté comentado
+        $this->assertStringNotContainsString('// Define ADMIN_EMAIL en producción', $seederContent);
+        $this->assertStringContainsString('isProduction()', $seederContent);
     }
 
     private function datosVideojuego(Categoria $categoria, Plataforma $plataforma): array

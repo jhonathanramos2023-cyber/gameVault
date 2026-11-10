@@ -18,6 +18,11 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
+    protected function isProduction(): bool
+    {
+        return app()->environment('production');
+    }
+
     /**
      * Seed the application's database.
      */
@@ -26,12 +31,12 @@ class DatabaseSeeder extends Seeder
         $adminPassword = env('ADMIN_PASSWORD');
         $adminEmail = env('ADMIN_EMAIL');
 
-        if (app()->environment('production')) {
-            if (blank($adminPassword)) {
-                throw new RuntimeException('Define ADMIN_PASSWORD en producción antes de sembrar el administrador.');
-            }
+        if ($this->isProduction()) {
             if (blank($adminEmail)) {
                 throw new RuntimeException('Define ADMIN_EMAIL en producción antes de sembrar el administrador.');
+            }
+            if (blank($adminPassword)) {
+                throw new RuntimeException('Define ADMIN_PASSWORD en producción antes de sembrar el administrador.');
             }
         }
 
