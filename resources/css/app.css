@@ -596,17 +596,17 @@ body[data-fondo="colaboradores"] .gv-panel {
 }
 
 
-@media (max-width: 375px) {
+@media (max-width: 767px) {
     .gv-hero { padding: 2rem 1rem; }
-    .display-title { font-size: 1.8rem; }
-    .glitch-text { font-size: 2rem; }
+    .display-title { font-size: clamp(1.5rem, 5vw, 2.5rem); }
+    .glitch-text { font-size: clamp(1.8rem, 6vw, 3rem); }
     .cover-frame img { height: 160px; }
     .gv-panel { padding: 1rem; }
     .gv-stat { padding: 1rem; min-height: 100px; }
     .gv-stat strong { font-size: 1.8rem; }
     .navbar-brand span:last-child { font-size: 0.9rem; }
-    .typewriter { animation: none; border-right: none; white-space: normal; }
-    .typewriter-title { animation: none; border-right: none; white-space: normal; }
+    .typewriter { animation: none; border-right: none; white-space: normal; font-size: clamp(0.9rem, 3vw, 1.1rem); }
+    .typewriter-title { animation: none; border-right: none; white-space: normal; font-size: clamp(1rem, 4vw, 1.5rem); }
     .scanline { display: none; }
 }
 
