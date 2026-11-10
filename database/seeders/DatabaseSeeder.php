@@ -24,12 +24,19 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $adminPassword = env('ADMIN_PASSWORD');
-        if (app()->environment('production') && blank($adminPassword)) {
-            throw new RuntimeException('Define ADMIN_PASSWORD en producción antes de sembrar el administrador.');
+        $adminEmail = env('ADMIN_EMAIL');
+
+        if (app()->environment('production')) {
+            if (blank($adminPassword)) {
+                throw new RuntimeException('Define ADMIN_PASSWORD en producción antes de sembrar el administrador.');
+            }
+            if (blank($adminEmail)) {
+                throw new RuntimeException('Define ADMIN_EMAIL en producción antes de sembrar el administrador.');
+            }
         }
 
         $admin = User::updateOrCreate(
-            ['email' => env('ADMIN_EMAIL', 'admin@gamevault.local')],
+            ['email' => $adminEmail ?: 'admin@gamevault.local'],
             [
                 'name' => 'Administración GameVault',
                 'password' => $adminPassword ?: 'GameVaultAdmin2026!',

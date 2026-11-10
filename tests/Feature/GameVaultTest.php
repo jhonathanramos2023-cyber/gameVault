@@ -303,6 +303,21 @@ class GameVaultTest extends TestCase
         Storage::disk('local')->assertExists('videojuegos/'.$videojuego->id);
     }
 
+    public function test_database_seeder_uses_default_email_when_not_provided(): void
+    {
+        // En entorno de test (no producción), usa el valor por defecto si ADMIN_EMAIL no está definido
+        putenv('ADMIN_PASSWORD=test_password');
+        putenv('ADMIN_EMAIL=');
+
+        $seeder = new \Database\Seeders\DatabaseSeeder();
+        $seeder->run();
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'admin@gamevault.local',
+            'rol' => 'administrador',
+        ]);
+    }
+
     private function datosVideojuego(Categoria $categoria, Plataforma $plataforma): array
     {
         return [
