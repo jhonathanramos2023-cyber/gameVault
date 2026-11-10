@@ -62,14 +62,15 @@ body[data-fondo="plataformas"]::before {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     background: var(--gv-bg);
+    opacity: var(--fondo-overlay-opacity, 1);
 }
-.fondo-seccion.principal::after { opacity: 0.35; }
-.fondo-seccion.login::after { opacity: 0.35; }
-.fondo-seccion.registros::after { opacity: 0.75; }
-.fondo-seccion.categorias::after { opacity: 0.75; }
-.fondo-seccion.referencias::after { opacity: 0.75; }
-.fondo-seccion.panel::after { opacity: 0.75; }
-.fondo-seccion.colaboradores::after { opacity: 0.75; }
+.fondo-seccion.principal::after { --fondo-overlay-opacity: 0.35; }
+.fondo-seccion.login::after { --fondo-overlay-opacity: 0.35; }
+.fondo-seccion.registros::after { --fondo-overlay-opacity: 0.75; }
+.fondo-seccion.categorias::after { --fondo-overlay-opacity: 0.75; }
+.fondo-seccion.referencias::after { --fondo-overlay-opacity: 0.75; }
+.fondo-seccion.panel::after { --fondo-overlay-opacity: 0.75; }
+.fondo-seccion.colaboradores::after { --fondo-overlay-opacity: 0.75; }
 @keyframes kenBurns {
     0% { transform: scale(1); }
     100% { transform: scale(1.1); }

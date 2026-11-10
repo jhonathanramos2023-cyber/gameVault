@@ -132,6 +132,11 @@ class EpicIntro {
             this.overlay.remove();
             document.body.style.overflow = '';
             sessionStorage.setItem('epicIntroShown', 'true');
+            
+            // Notificar a matrix.js que la entrada épica terminó
+            if (typeof window.setEpicIntroFinished === 'function') {
+                window.setEpicIntroFinished();
+            }
         }, 500);
     }
 

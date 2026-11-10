@@ -1,3 +1,6 @@
+const FONDO_DURACION_MS = 5000;
+const FONDO_DESVANECIMIENTO_MS = 1500;
+
 class MatrixRain {
     constructor() {
         this.canvas = document.createElement('canvas');
@@ -11,6 +14,10 @@ class MatrixRain {
         this.animationId = null;
         this.lastTime = 0;
         this.fpsInterval = 1000 / 30;
+        this.fondoVisible = true;
+        this.fondoStartTime = null;
+        this.epicIntroFinished = false;
+        this.reducedMotion = false;
     }
 
     init() {
@@ -18,6 +25,19 @@ class MatrixRain {
         window.addEventListener('resize', () => this.resize());
         this.setupColumns();
         this.start();
+        
+        const fondo = document.querySelector('.fondo-seccion');
+        if (fondo) {
+            this.fondoStartTime = performance.now();
+        }
+    }
+
+    setEpicIntroFinished() {
+        this.epicIntroFinished = true;
+        const fondo = document.querySelector('.fondo-seccion');
+        if (fondo) {
+            this.fondoStartTime = performance.now();
+        }
     }
 
     resize() {
@@ -62,8 +82,11 @@ class MatrixRain {
 
         this.lastTime = timestamp - (elapsed % this.fpsInterval);
 
-        this.ctx.fillStyle = 'rgba(2, 10, 2, 0.05)';
+        // Usar destination-out para borrar estelas sin pintar fondo opaco
+        this.ctx.globalCompositeOperation = 'destination-out';
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
         this.ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+        this.ctx.globalCompositeOperation = 'source-over';
 
         this.ctx.fillStyle = this.getColor();
         this.ctx.font = `${this.fontSize}px 'Share Tech Mono', monospace`;
@@ -80,6 +103,32 @@ class MatrixRain {
             }
 
             this.columns[i]++;
+        }
+
+        // Desvanecer imagen de fondo y capa oscura después de 5 segundos
+        if (this.fondoStartTime && this.fondoVisible && !this.reducedMotion) {
+            const fondoElapsed = timestamp - this.fondoStartTime;
+            if (fondoElapsed >= FONDO_DURACION_MS) {
+                const fadeElapsed = fondoElapsed - FONDO_DURACION_MS;
+                const fadeProgress = Math.min(fadeElapsed / FONDO_DESVANECIMIENTO_MS, 1);
+                
+                const fondo = document.querySelector('.fondo-seccion');
+                if (fondo) {
+                    fondo.style.opacity = 1 - fadeProgress;
+                    fondo.style.transition = 'opacity 0.1s linear';
+                    // Desvanecer también la capa oscura (::after)
+                    const baseOpacity = fondo.classList.contains('principal') || fondo.classList.contains('login') ? 0.35 : 0.75;
+                    const overlayOpacity = baseOpacity * (1 - fadeProgress);
+                    fondo.style.setProperty('--fondo-overlay-opacity', overlayOpacity);
+                }
+                
+                if (fadeProgress >= 1) {
+                    this.fondoVisible = false;
+                    if (fondo) {
+                        fondo.style.display = 'none';
+                    }
+                }
+            }
         }
     }
 
@@ -102,11 +151,26 @@ let matrixRain = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // Con prefers-reduced-motion, la imagen se queda estática sin lluvia ni desvanecimiento
+        const fondo = document.querySelector('.fondo-seccion');
+        if (fondo) {
+            fondo.style.animation = 'none';
+        }
+        matrixRain = new MatrixRain();
+        matrixRain.reducedMotion = true;
+        matrixRain.init();
+
+        // Exponer función para que epic-intro.js pueda notificar cuando termine
+        window.setEpicIntroFinished = () => matrixRain.setEpicIntroFinished();
+
         return;
     }
 
     matrixRain = new MatrixRain();
     matrixRain.init();
+
+    // Exponer función para que epic-intro.js pueda notificar cuando termine
+    window.setEpicIntroFinished = () => matrixRain.setEpicIntroFinished();
 
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
