@@ -21,7 +21,12 @@
                             <td>{{ $videojuego->categoria->nombre }}</td>
                             <td>{{ $videojuego->imagenes->count() }}</td>
                             <td class="small gv-muted">{{ $videojuego->updated_at->diffForHumans() }}</td>
-                            <td class="text-nowrap"><a class="btn btn-sm btn-outline-info" href="{{ route('videojuegos.show', $videojuego) }}">Abrir</a></td>
+                            <td class="text-nowrap">
+                                <a class="btn btn-sm btn-outline-info" href="{{ route('videojuegos.show', $videojuego) }}">Abrir</a>
+                                @if(auth()->user()->esAdministrador())
+                                    <form method="POST" action="{{ route('videojuegos.destroy', $videojuego) }}" class="d-inline" onsubmit="return confirm('¿Eliminar esta ficha, todas sus imágenes almacenadas y sus referencias? Esta acción no se puede deshacer.')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button></form>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>
