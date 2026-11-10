@@ -38,7 +38,10 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     && echo "opcache.enable=1" >> "$PHP_INI_DIR/php.ini" \
     && echo "opcache.memory_consumption=128" >> "$PHP_INI_DIR/php.ini" \
     && echo "opcache.interned_strings_buffer=8" >> "$PHP_INI_DIR/php.ini" \
-    && echo "opcache.max_accelerated_files=10000" >> "$PHP_INI_DIR/php.ini"
+    && echo "opcache.max_accelerated_files=10000" >> "$PHP_INI_DIR/php.ini" \
+    && echo "upload_max_filesize=5M" >> "$PHP_INI_DIR/php.ini" \
+    && echo "post_max_size=5M" >> "$PHP_INI_DIR/php.ini" \
+    && echo "memory_limit=256M" >> "$PHP_INI_DIR/php.ini"
 
 WORKDIR /var/www/html
 
