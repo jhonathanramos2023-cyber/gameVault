@@ -19,7 +19,7 @@
         </div>
         <div class="col-12 col-lg-5">
             <p class="eyebrow">{{ $videojuego->categoria->nombre }} · {{ $videojuego->formato }}</p>
-            <h1 class="display-5 fw-bold">{{ $videojuego->titulo }}</h1>
+            <h1 class="display-5 fw-bold glitch-title">{{ $videojuego->titulo }}</h1>
             <span class="badge badge-status status-publicado mb-2">Publicado</span>
             <p class="classification mb-3">{{ $videojuego->tipo_proyecto }}</p>
             <p class="lead gv-muted">{{ $videojuego->descripcion }}</p>
@@ -62,16 +62,16 @@
                 <div class="row g-3">
                     @forelse ($videojuego->referencias as $referencia)
                         <div class="col-12 col-md-6">
-                            <article class="p-3 rounded-3 border border-secondary-subtle h-100">
-                                <span class="eyebrow">{{ $referencia->tipo_fuente }}</span>
+                            <article class="p-3 rounded-3 border border-secondary-subtle h-100 terminal-reference">
+                                <span class="eyebrow">> {{ $referencia->tipo_fuente }}</span>
                                 <h3 class="h6 mt-2">{{ $referencia->titulo }}</h3>
-                                @if ($referencia->observaciones)<p class="small gv-muted">{{ $referencia->observaciones }}</p>@endif
-                                @if ($referencia->fecha_consulta)<p class="small gv-muted">Consultada: {{ $referencia->fecha_consulta->format('d/m/Y') }}</p>@endif
-                                <a class="reference-link" href="{{ $referencia->url }}" target="_blank" rel="noopener noreferrer">{{ $referencia->url }} <span aria-hidden="true">↗</span></a>
+                                @if ($referencia->observaciones)<p class="small gv-muted">> {{ $referencia->observaciones }}</p>@endif
+                                @if ($referencia->fecha_consulta)<p class="small gv-muted">> Consultada: {{ $referencia->fecha_consulta->format('d/m/Y') }}</p>@endif
+                                <a class="reference-link" href="{{ $referencia->url }}" target="_blank" rel="noopener noreferrer">> {{ $referencia->url }} <span aria-hidden="true">↗</span></a>
                             </article>
                         </div>
                     @empty
-                        <div class="col-12"><p class="gv-muted mb-0">No hay referencias externas publicadas.</p></div>
+                        <div class="col-12"><p class="gv-muted mb-0">> No hay referencias externas publicadas.</p></div>
                     @endforelse
                 </div>
             </section>

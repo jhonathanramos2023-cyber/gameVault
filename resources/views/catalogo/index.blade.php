@@ -5,9 +5,10 @@
 
 @section('content')
     <section class="gv-hero mb-4 mb-lg-5">
+        <div class="scanline"></div>
         <p class="eyebrow mb-3">Archivo documental · acceso abierto</p>
-        <h1 class="display-title display-4 mb-3">Proyectos que mantienen vivos los videojuegos.</h1>
-        <p class="lead gv-muted mb-0" style="max-width: 690px">GameVault documenta iniciativas abiertas, preservación y adaptación. Aquí encontrarás contexto y referencias; no alojamos juegos ni archivos ejecutables.</p>
+        <h1 class="display-title display-4 mb-3 glitch-text">GAMEVAULT</h1>
+        <p class="lead gv-muted mb-0 typewriter" style="max-width: 690px">Proyectos que mantienen vivos los videojuegos.</p>
     </section>
 
     <section class="gv-panel mb-4">
@@ -68,8 +69,8 @@
             <div class="row g-3 g-lg-4">
                 @foreach ($videojuegos as $videojuego)
                     @php($portada = $videojuego->portada)
-                    <div class="col-12 col-sm-6 col-xl-4">
-                        <article class="card gv-card">
+                    <div class="col-12 col-sm-6 col-xl-4 catalog-card">
+                        <article class="card gv-card tilt-card">
                             <a href="{{ route('catalogo.show', $videojuego->slug) }}" class="cover-frame" aria-label="Ver ficha de {{ $videojuego->titulo }}">
                                 @if ($portada)
                                     <img src="{{ \Illuminate\Support\Facades\Storage::disk(config('gamevault.image_disk'))->url($portada->ruta) }}" alt="{{ $portada->texto_alternativo }}">

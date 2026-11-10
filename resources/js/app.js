@@ -1,6 +1,7 @@
 import 'bootstrap';
 import './matrix.js';
 import './epic-intro.js';
+import './catalog-effects.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const selector = document.querySelector('[data-image-preview]');
