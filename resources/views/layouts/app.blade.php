@@ -9,7 +9,29 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 </head>
-<body>
+<body @php
+$fondo = '';
+if (request()->routeIs('catalogo.*')) {
+    $fondo = 'principal';
+} elseif (request()->routeIs('login')) {
+    $fondo = 'login';
+} elseif (request()->routeIs('dashboard')) {
+    $fondo = 'panel';
+} elseif (request()->routeIs('videojuegos.*')) {
+    $fondo = 'registros';
+} elseif (request()->routeIs('categorias.*')) {
+    $fondo = 'categorias';
+} elseif (request()->routeIs('plataformas.*')) {
+    $fondo = 'plataformas';
+} elseif (request()->routeIs('usuarios.*')) {
+    $fondo = 'colaboradores';
+} elseif (request()->routeIs('referencias.*')) {
+    $fondo = 'referencias';
+}
+@endphp data-fondo="{{ $fondo }}">
+@if ($fondo && file_exists(public_path("img/fondos/{$fondo}.jpg")))
+<div class="fondo-seccion {{ $fondo }}" style="background-image: url('{{ asset("img/fondos/{$fondo}.jpg") }}');"></div>
+@endif
 <nav class="navbar navbar-expand-lg gv-navbar sticky-top">
     <div class="container gv-container">
         <a class="navbar-brand gv-brand d-flex align-items-center" href="{{ route('catalogo.index') }}">
