@@ -286,6 +286,23 @@ class GameVaultTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_image_upload_succeeds_with_storage_fake(): void
+    {
+        Storage::fake('local');
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $plataforma = Plataforma::factory()->create();
+        $payload = $this->datosVideojuego($categoria, $plataforma);
+
+        $this->actingAs($colaborador)
+            ->post(route('videojuegos.store'), $payload)
+            ->assertRedirect();
+
+        $videojuego = Videojuego::firstOrFail();
+        $this->assertDatabaseHas('imagenes_videojuego', ['videojuego_id' => $videojuego->id]);
+        Storage::disk('local')->assertExists('videojuegos/'.$videojuego->id);
+    }
+
     private function datosVideojuego(Categoria $categoria, Plataforma $plataforma): array
     {
         return [

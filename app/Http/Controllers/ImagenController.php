@@ -38,9 +38,14 @@ class ImagenController extends Controller
     {
         $videojuego = $imagen->videojuego;
         Gate::authorize('update', $videojuego);
-        Storage::disk(config('gamevault.image_disk'))->delete($imagen->ruta);
-        $imagen->delete();
 
-        return back()->with('success', 'Imagen eliminada.');
+        try {
+            Storage::disk(config('gamevault.image_disk'))->delete($imagen->ruta);
+            $imagen->delete();
+
+            return back()->with('success', 'Imagen eliminada.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al eliminar la imagen. Intente nuevamente.');
+        }
     }
 }

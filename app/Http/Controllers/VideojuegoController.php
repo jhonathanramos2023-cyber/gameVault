@@ -106,13 +106,17 @@ class VideojuegoController extends Controller
         Gate::authorize('delete', $videojuego);
         $disk = Storage::disk(config('gamevault.image_disk'));
 
-        foreach ($videojuego->imagenes as $imagen) {
-            $disk->delete($imagen->ruta);
+        try {
+            foreach ($videojuego->imagenes as $imagen) {
+                $disk->delete($imagen->ruta);
+            }
+
+            $videojuego->delete();
+
+            return redirect()->route('videojuegos.index')->with('success', 'Ficha y sus imágenes y referencias eliminadas.');
+        } catch (\Exception $e) {
+            return redirect()->route('videojuegos.index')->with('error', 'Error al eliminar la ficha. Intente nuevamente.');
         }
-
-        $videojuego->delete();
-
-        return redirect()->route('videojuegos.index')->with('success', 'Ficha y sus imágenes y referencias eliminadas.');
     }
 
     public function enviarRevision(Videojuego $videojuego)
