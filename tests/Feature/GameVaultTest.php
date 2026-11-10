@@ -190,6 +190,102 @@ class GameVaultTest extends TestCase
             ->assertSee('Proyecto ScummVM');
     }
 
+    public function test_collaborator_cannot_delete_images_or_references_from_others_records(): void
+    {
+        Storage::fake('local');
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $otro = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $videojuegoAjeno = Videojuego::factory()->create([
+            'user_id' => $otro->id,
+            'categoria_id' => $categoria->id,
+            'estado' => 'borrador',
+        ]);
+        $imagen = ImagenVideojuego::factory()->create(['videojuego_id' => $videojuegoAjeno->id]);
+        $referencia = Referencia::factory()->create(['videojuego_id' => $videojuegoAjeno->id]);
+
+        $this->actingAs($colaborador)
+            ->delete(route('imagenes.destroy', $imagen))
+            ->assertForbidden();
+
+        $this->actingAs($colaborador)
+            ->delete(route('referencias.destroy', [$videojuegoAjeno, $referencia]))
+            ->assertForbidden();
+    }
+
+    public function test_collaborator_cannot_delete_records_own_or_others(): void
+    {
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $videojuegoPropio = Videojuego::factory()->create([
+            'user_id' => $colaborador->id,
+            'categoria_id' => $categoria->id,
+        ]);
+        $otro = User::factory()->create(['rol' => 'colaborador']);
+        $videojuegoAjeno = Videojuego::factory()->create([
+            'user_id' => $otro->id,
+            'categoria_id' => $categoria->id,
+        ]);
+
+        $this->actingAs($colaborador)
+            ->delete(route('videojuegos.destroy', $videojuegoPropio))
+            ->assertForbidden();
+
+        $this->actingAs($colaborador)
+            ->delete(route('videojuegos.destroy', $videojuegoAjeno))
+            ->assertForbidden();
+    }
+
+    public function test_collaborator_panel_list_shows_only_own_records(): void
+    {
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $videojuegoPropio = Videojuego::factory()->create([
+            'user_id' => $colaborador->id,
+            'categoria_id' => $categoria->id,
+            'titulo' => 'Ficha propia',
+        ]);
+        $otro = User::factory()->create(['rol' => 'colaborador']);
+        Videojuego::factory()->create([
+            'user_id' => $otro->id,
+            'categoria_id' => $categoria->id,
+            'titulo' => 'Ficha ajena',
+        ]);
+
+        $this->actingAs($colaborador)
+            ->get(route('videojuegos.index'))
+            ->assertOk()
+            ->assertSee('Ficha propia')
+            ->assertDontSee('Ficha ajena');
+    }
+
+    public function test_image_and_reference_routes_verify_resource_belongs_to_authorized_videojuego(): void
+    {
+        Storage::fake('local');
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $videojuegoPropio = Videojuego::factory()->create([
+            'user_id' => $colaborador->id,
+            'categoria_id' => $categoria->id,
+            'estado' => 'borrador',
+        ]);
+        $otro = User::factory()->create(['rol' => 'colaborador']);
+        $videojuegoAjeno = Videojuego::factory()->create([
+            'user_id' => $otro->id,
+            'categoria_id' => $categoria->id,
+        ]);
+        $imagenAjena = ImagenVideojuego::factory()->create(['videojuego_id' => $videojuegoAjeno->id]);
+        $referenciaAjena = Referencia::factory()->create(['videojuego_id' => $videojuegoAjeno->id]);
+
+        $this->actingAs($colaborador)
+            ->delete(route('imagenes.destroy', $imagenAjena))
+            ->assertForbidden();
+
+        $this->actingAs($colaborador)
+            ->delete(route('referencias.destroy', [$videojuegoPropio, $referenciaAjena]))
+            ->assertNotFound();
+    }
+
     private function datosVideojuego(Categoria $categoria, Plataforma $plataforma): array
     {
         return [
