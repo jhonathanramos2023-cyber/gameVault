@@ -98,6 +98,16 @@ php artisan serve
 
 La aplicación estará disponible en `http://localhost:8000`.
 
+## Despliegue
+
+Para desplegar GameVault en producción (por ejemplo, en Render con Docker, PostgreSQL y almacenamiento S3-compatible), consulta la guía completa en `docs/DESPLIEGUE.md`.
+
+El despliegue incluye:
+- Dockerfile multi-stage (Node 22 + PHP 8.3 con Apache)
+- Script de inicio que ejecuta migraciones y seeders de forma idempotente
+- Configuración para almacenamiento S3-compatible (Cloudflare R2, Supabase)
+- Variables de entorno para producción (sin datos de ejemplo por defecto)
+
 ### Ejecutar Tests
 
 ```bash
