@@ -415,6 +415,10 @@ body[data-fondo="colaboradores"] .pagination {
     object-fit: cover;
     border: 1px solid var(--gv-line);
     border-radius: 0;
+    transition: transform 0.6s ease;
+}
+.detail-image:hover {
+    transform: scale(1.05);
 }
 .reference-link { word-break: break-word; }
 .empty-state {
@@ -536,12 +540,6 @@ body[data-fondo="colaboradores"] .pagination {
 .terminal-reference {
  border: 1px solid var(--gv-line);
  background: rgba(2, 10, 2, 0.8);
-}
-.detail-image {
- transition: transform 10s ease;
-}
-.detail-image:hover {
- transform: scale(1.05);
 }
 
 .login-panel {
