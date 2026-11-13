@@ -555,6 +555,41 @@ class GameVaultTest extends TestCase
         $this->assertEquals('en_revision', $videojuego->fresh()->estado);
     }
 
+    public function test_colaborador_no_puede_agregar_imagen_ni_referencia_en_ficha_en_revision(): void
+    {
+        Storage::fake('local');
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $plataforma = Plataforma::factory()->create();
+        
+        $videojuego = Videojuego::factory()->create([
+            'user_id' => $colaborador->id,
+            'categoria_id' => $categoria->id,
+            'estado' => 'en_revision',
+        ]);
+        $videojuego->plataformas()->attach($plataforma);
+        
+        // Intentar agregar imagen
+        $responseImagen = $this->actingAs($colaborador)
+            ->post(route('imagenes.store', $videojuego), [
+                'imagenes' => [UploadedFile::fake()->image('nueva.png')],
+                'orden' => 1,
+            ]);
+
+        // Intentar crear referencia
+        $responseReferencia = $this->actingAs($colaborador)
+            ->post(route('referencias.store', $videojuego), [
+                'titulo' => 'Referencia de prueba',
+                'url' => 'https://example.com',
+                'tipo_fuente' => 'Sitio oficial',
+            ]);
+
+        // Informar código HTTP y causa
+        dump('Código HTTP al agregar imagen: '.$responseImagen->status());
+        dump('Código HTTP al crear referencia: '.$responseReferencia->status());
+        dump('Causa: VideojuegoPolicy::update requiere estado=borrador para colaborador (línea 30-38 de VideojuegoPolicy.php)');
+    }
+
     private function datosVideojuego(Categoria $categoria, Plataforma $plataforma): array
     {
         return [
