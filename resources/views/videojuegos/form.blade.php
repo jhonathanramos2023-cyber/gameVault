@@ -68,31 +68,43 @@
     </form>
 
     @if($editando)
-        <section class="gv-panel mt-4">
-            <div class="d-flex justify-content-between align-items-center mb-3"><div><p class="eyebrow mb-1">Material visual</p><h2 class="h5 mb-0">Imágenes de la ficha</h2></div><span class="small gv-muted">La de menor orden es la portada</span></div>
-            <div class="row g-3 mb-4">
-                @forelse($videojuego->imagenes as $imagen)
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <img class="preview-image" src="{{ \Illuminate\Support\Facades\Storage::disk(config('gamevault.image_disk'))->url($imagen->ruta) }}" alt="{{ $imagen->texto_alternativo }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <div class="gv-panel p-2 text-center small" style="display:none">{{ $imagen->texto_alternativo }}</div>
-                        <p class="small gv-muted mt-2 mb-2">{{ $imagen->texto_alternativo }} · orden {{ $imagen->orden }}</p>
-                        <form method="POST" action="{{ route('imagenes.destroy', $imagen) }}" onsubmit="return confirm('¿Eliminar esta imagen?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit">Eliminar imagen</button></form>
-                    </div>
-                @empty
-                    <p class="gv-muted">No hay imágenes registradas.</p>
-                @endforelse
-            </div>
-            <form method="POST" action="{{ route('imagenes.store', $videojuego) }}" enctype="multipart/form-data" class="border-top border-secondary-subtle pt-3">
-                @csrf
-                <label class="form-label" for="mas-imagenes">Agregar imágenes (JPG, PNG o WEBP; máximo 2 MB cada una)</label>
-                <div class="row g-2 align-items-end">
-                    <div class="col-12 col-md-8"><input id="mas-imagenes" name="imagenes[]" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple required class="form-control" data-image-preview></div>
-                    <div class="col-12 col-md-4"><label class="form-label" for="orden">Orden inicial</label><input id="orden" name="orden" type="number" min="0" value="{{ $videojuego->imagenes->max('orden') + 1 }}" class="form-control"></div>
+        @if(!auth()->user()->esAdministrador() && $videojuego->estado !== 'borrador')
+            <section class="gv-panel mt-4">
+                <div class="alert alert-warning">
+                    Esta ficha está en revisión o publicada; solo el administrador puede devolverla a borrador.
                 </div>
-                <div class="row g-3 mt-1" data-preview-grid aria-live="polite"></div>
-                <button class="btn btn-outline-info btn-sm mt-3" type="submit">Cargar imágenes</button>
-            </form>
-        </section>
+            </section>
+        @else
+            <section class="gv-panel mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3"><div><p class="eyebrow mb-1">Material visual</p><h2 class="h5 mb-0">Imágenes de la ficha</h2></div><span class="small gv-muted">La de menor orden es la portada</span></div>
+                <div class="row g-3 mb-4">
+                    @forelse($videojuego->imagenes as $imagen)
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <img class="preview-image" src="{{ \Illuminate\Support\Facades\Storage::disk(config('gamevault.image_disk'))->url($imagen->ruta) }}" alt="{{ $imagen->texto_alternativo }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                            <div class="gv-panel p-2 text-center small" style="display:none">{{ $imagen->texto_alternativo }}</div>
+                            <p class="small gv-muted mt-2 mb-2">{{ $imagen->texto_alternativo }} · orden {{ $imagen->orden }}</p>
+                            @if(auth()->user()->esAdministrador() || $videojuego->estado === 'borrador')
+                                <form method="POST" action="{{ route('imagenes.destroy', $imagen) }}" onsubmit="return confirm('¿Eliminar esta imagen?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit">Eliminar imagen</button></form>
+                            @endif
+                        </div>
+                    @empty
+                        <p class="gv-muted">No hay imágenes registradas.</p>
+                    @endforelse
+                </div>
+                @if(auth()->user()->esAdministrador() || $videojuego->estado === 'borrador')
+                    <form method="POST" action="{{ route('imagenes.store', $videojuego) }}" enctype="multipart/form-data" class="border-top border-secondary-subtle pt-3">
+                        @csrf
+                        <label class="form-label" for="mas-imagenes">Agregar imágenes (JPG, PNG o WEBP; máximo 2 MB cada una)</label>
+                        <div class="row g-2 align-items-end">
+                            <div class="col-12 col-md-8"><input id="mas-imagenes" name="imagenes[]" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple required class="form-control" data-image-preview></div>
+                            <div class="col-12 col-md-4"><label class="form-label" for="orden">Orden inicial</label><input id="orden" name="orden" type="number" min="0" value="{{ $videojuego->imagenes->max('orden') + 1 }}" class="form-control"></div>
+                        </div>
+                        <div class="row g-3 mt-1" data-preview-grid aria-live="polite"></div>
+                        <button class="btn btn-outline-info btn-sm mt-3" type="submit">Cargar imágenes</button>
+                    </form>
+                @endif
+            </section>
+        @endif
     @endif
 
     @if($videojuego->exists && auth()->user()->esAdministrador())
