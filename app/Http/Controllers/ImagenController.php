@@ -13,6 +13,8 @@ class ImagenController extends Controller
 {
     public function store(ImagenRequest $request, Videojuego $videojuego)
     {
+        Gate::authorize('update', $videojuego);
+        
         $datos = $request->validated();
         $orden = (int) ($datos['orden'] ?? ($videojuego->imagenes()->max('orden') + 1));
 
