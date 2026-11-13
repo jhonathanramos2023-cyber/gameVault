@@ -28,6 +28,8 @@ class ReferenciaController extends Controller
 
     public function store(ReferenciaRequest $request, Videojuego $videojuego)
     {
+        Gate::authorize('update', $videojuego);
+        
         $videojuego->referencias()->create($request->validated());
 
         return redirect()->route('referencias.index', $videojuego)->with('success', 'Referencia registrada.');
