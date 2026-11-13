@@ -16,6 +16,13 @@ chmod -R 775 storage bootstrap/cache
 echo "Creando enlace simbólico de storage..."
 php artisan storage:link --force
 
+# Verificar que el enlace simbólico existe
+echo "Verificando enlace simbólico..."
+if [ ! -L public/storage ]; then
+    echo "ERROR: public/storage no es un enlace simbólico"
+    ls -la public/ | grep storage
+fi
+
 # Asegurar que public/storage tenga permisos correctos
 chmod -R 775 public/storage
 
