@@ -23,6 +23,11 @@
             <span class="badge badge-status status-publicado mb-2">Publicado</span>
             <p class="classification mb-3">{{ $videojuego->tipo_proyecto }}</p>
             <p class="lead gv-muted">{{ $videojuego->descripcion }}</p>
+            @if($videojuego->url_iso)
+                <div class="my-3">
+                    <a href="{{ $videojuego->url_iso }}" target="_blank" rel="noopener noreferrer" class="btn btn-cyan w-100">Ir a plataforma del juego ↗</a>
+                </div>
+            @endif
             <div class="gv-warning my-4">{{ $videojuego->advertencia }}</div>
             <div class="gv-panel mb-3">
                 <h2 class="h6 text-uppercase gv-muted">Plataformas documentadas</h2>

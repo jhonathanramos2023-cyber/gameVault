@@ -9,6 +9,11 @@
         <p class="classification">{{ $videojuego->tipo_proyecto }} · {{ $videojuego->formato }}</p>
         <p class="lead">{{ $videojuego->descripcion }}</p>
         <div class="gv-warning">{{ $videojuego->advertencia }}</div>
+        @if($videojuego->url_iso)
+            <div class="mt-3">
+                <a href="{{ $videojuego->url_iso }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-info">Ir a plataforma del juego ↗</a>
+            </div>
+        @endif
         <div class="d-flex flex-wrap gap-2 mt-3">@foreach($videojuego->plataformas as $plataforma)<span class="badge text-bg-dark border border-secondary-subtle">{{ $plataforma->nombre }}</span>@endforeach</div>
         <div class="small gv-muted mt-3">Registró {{ $videojuego->usuario->name }} · {{ $videojuego->updated_at->format('d/m/Y H:i') }}</div>
     </section>

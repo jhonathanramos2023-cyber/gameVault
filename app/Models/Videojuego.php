@@ -16,7 +16,7 @@ class Videojuego extends Model
 
     protected $fillable = [
         'titulo', 'slug', 'descripcion', 'informacion_tecnica', 'requisitos_conocidos',
-        'formato', 'tipo_proyecto', 'estado', 'advertencia', 'fecha_lanzamiento',
+        'formato', 'tipo_proyecto', 'estado', 'advertencia', 'fecha_lanzamiento', 'url_iso',
         'categoria_id', 'user_id',
     ];
 
