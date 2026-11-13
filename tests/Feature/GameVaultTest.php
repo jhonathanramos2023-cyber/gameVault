@@ -569,25 +569,29 @@ class GameVaultTest extends TestCase
         ]);
         $videojuego->plataformas()->attach($plataforma);
         
+        $imagenesCount = $videojuego->imagenes()->count();
+        $referenciasCount = $videojuego->referencias()->count();
+        
         // Intentar agregar imagen
-        $responseImagen = $this->actingAs($colaborador)
+        $this->actingAs($colaborador)
             ->post(route('imagenes.store', $videojuego), [
                 'imagenes' => [UploadedFile::fake()->image('nueva.png')],
                 'orden' => 1,
-            ]);
+            ])
+            ->assertForbidden();
 
         // Intentar crear referencia
-        $responseReferencia = $this->actingAs($colaborador)
+        $this->actingAs($colaborador)
             ->post(route('referencias.store', $videojuego), [
                 'titulo' => 'Referencia de prueba',
                 'url' => 'https://example.com',
                 'tipo_fuente' => 'Sitio oficial',
-            ]);
+            ])
+            ->assertForbidden();
 
-        // Informar código HTTP y causa
-        dump('Código HTTP al agregar imagen: '.$responseImagen->status());
-        dump('Código HTTP al crear referencia: '.$responseReferencia->status());
-        dump('Causa: VideojuegoPolicy::update requiere estado=borrador para colaborador (línea 30-38 de VideojuegoPolicy.php)');
+        // Afirmar que no se crearon filas nuevas
+        $this->assertEquals($imagenesCount, $videojuego->fresh()->imagenes()->count());
+        $this->assertEquals($referenciasCount, $videojuego->fresh()->referencias()->count());
     }
 
     private function datosVideojuego(Categoria $categoria, Plataforma $plataforma): array
