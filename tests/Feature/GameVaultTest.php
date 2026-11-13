@@ -366,6 +366,195 @@ class GameVaultTest extends TestCase
         }
     }
 
+    public function test_colaborador_agrega_imagen_a_su_borrador(): void
+    {
+        Storage::fake('local');
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $plataforma = Plataforma::factory()->create();
+        
+        $videojuego = Videojuego::factory()->create([
+            'user_id' => $colaborador->id,
+            'categoria_id' => $categoria->id,
+            'estado' => 'borrador',
+        ]);
+        $videojuego->plataformas()->attach($plataforma);
+
+        $this->actingAs($colaborador)
+            ->post(route('imagenes.store', $videojuego), [
+                'imagenes' => [UploadedFile::fake()->image('nueva.png')],
+                'orden' => 1,
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertEquals(1, $videojuego->fresh()->imagenes()->count());
+    }
+
+    public function test_colaborador_borra_imagen_de_su_borrador(): void
+    {
+        Storage::fake('local');
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $plataforma = Plataforma::factory()->create();
+        
+        $videojuego = Videojuego::factory()->create([
+            'user_id' => $colaborador->id,
+            'categoria_id' => $categoria->id,
+            'estado' => 'borrador',
+        ]);
+        $videojuego->plataformas()->attach($plataforma);
+        
+        $imagen = \App\Models\ImagenVideojuego::factory()->create([
+            'videojuego_id' => $videojuego->id,
+            'ruta' => 'videojuegos/1/test.png',
+        ]);
+
+        $this->actingAs($colaborador)
+            ->delete(route('imagenes.destroy', $imagen))
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertEquals(0, $videojuego->fresh()->imagenes()->count());
+    }
+
+    public function test_colaborador_crea_referencia_en_su_borrador(): void
+    {
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $plataforma = Plataforma::factory()->create();
+        
+        $videojuego = Videojuego::factory()->create([
+            'user_id' => $colaborador->id,
+            'categoria_id' => $categoria->id,
+            'estado' => 'borrador',
+        ]);
+        $videojuego->plataformas()->attach($plataforma);
+
+        $this->actingAs($colaborador)
+            ->post(route('referencias.store', $videojuego), [
+                'titulo' => 'Referencia de prueba',
+                'url' => 'https://example.com',
+                'tipo_fuente' => 'Sitio oficial',
+                'observaciones' => 'Observación',
+                'fecha_consulta' => '2026-01-01',
+            ])
+            ->assertRedirect(route('referencias.index', $videojuego))
+            ->assertSessionHas('success');
+
+        $this->assertEquals(1, $videojuego->fresh()->referencias()->count());
+    }
+
+    public function test_colaborador_edita_referencia_de_su_borrador(): void
+    {
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $plataforma = Plataforma::factory()->create();
+        
+        $videojuego = Videojuego::factory()->create([
+            'user_id' => $colaborador->id,
+            'categoria_id' => $categoria->id,
+            'estado' => 'borrador',
+        ]);
+        $videojuego->plataformas()->attach($plataforma);
+        
+        $referencia = \App\Models\Referencia::factory()->create([
+            'videojuego_id' => $videojuego->id,
+            'titulo' => 'Referencia original',
+        ]);
+
+        $this->actingAs($colaborador)
+            ->put(route('referencias.update', [$videojuego, $referencia]), [
+                'titulo' => 'Referencia editada',
+                'url' => 'https://example.com',
+                'tipo_fuente' => 'Sitio oficial',
+                'observaciones' => 'Observación',
+                'fecha_consulta' => '2026-01-01',
+            ])
+            ->assertRedirect(route('referencias.index', $videojuego))
+            ->assertSessionHas('success');
+
+        $this->assertEquals('Referencia editada', $referencia->fresh()->titulo);
+    }
+
+    public function test_colaborador_borra_referencia_de_su_borrador(): void
+    {
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $plataforma = Plataforma::factory()->create();
+        
+        $videojuego = Videojuego::factory()->create([
+            'user_id' => $colaborador->id,
+            'categoria_id' => $categoria->id,
+            'estado' => 'borrador',
+        ]);
+        $videojuego->plataformas()->attach($plataforma);
+        
+        $referencia = \App\Models\Referencia::factory()->create([
+            'videojuego_id' => $videojuego->id,
+        ]);
+
+        $this->actingAs($colaborador)
+            ->delete(route('referencias.destroy', [$videojuego, $referencia]))
+            ->assertRedirect(route('referencias.index', $videojuego))
+            ->assertSessionHas('success');
+
+        $this->assertEquals(0, $videojuego->fresh()->referencias()->count());
+    }
+
+    public function test_colaborador_reedita_y_reenvia_ficha_devuelta(): void
+    {
+        Storage::fake('local');
+        $colaborador = User::factory()->create(['rol' => 'colaborador']);
+        $categoria = Categoria::factory()->create();
+        $plataforma = Plataforma::factory()->create();
+        
+        $videojuego = Videojuego::factory()->create([
+            'user_id' => $colaborador->id,
+            'categoria_id' => $categoria->id,
+            'estado' => 'en_revision',
+        ]);
+        $videojuego->plataformas()->attach($plataforma);
+        
+        // Agregar imagen para poder enviar a revisión
+        \App\Models\ImagenVideojuego::factory()->create([
+            'videojuego_id' => $videojuego->id,
+            'ruta' => 'videojuegos/1/test.png',
+        ]);
+
+        // Admin devuelve la ficha
+        $admin = User::factory()->create(['rol' => 'administrador']);
+        $this->actingAs($admin)
+            ->patch(route('videojuegos.devolver', $videojuego))
+            ->assertRedirect();
+
+        $this->assertEquals('borrador', $videojuego->fresh()->estado);
+
+        // Colaborador reedita
+        $this->actingAs($colaborador)
+            ->put(route('videojuegos.update', $videojuego), [
+                'titulo' => 'Título editado',
+                'descripcion' => 'Descripción editada',
+                'formato' => 'preservación digital',
+                'tipo_proyecto' => 'preservación digital',
+                'advertencia' => 'Advertencia',
+                'categoria_id' => $categoria->id,
+                'plataformas' => [$plataforma->id],
+            ])
+            ->assertRedirect(route('videojuegos.edit', $videojuego))
+            ->assertSessionHas('success');
+
+        $this->assertEquals('Título editado', $videojuego->fresh()->titulo);
+
+        // Colaborador reenvía a revisión
+        $this->actingAs($colaborador)
+            ->post(route('videojuegos.enviar-revision', $videojuego))
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertEquals('en_revision', $videojuego->fresh()->estado);
+    }
+
     private function datosVideojuego(Categoria $categoria, Plataforma $plataforma): array
     {
         return [
