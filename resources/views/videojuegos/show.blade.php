@@ -11,7 +11,7 @@
         <div class="gv-warning">{{ $videojuego->advertencia }}</div>
         @if($videojuego->url_iso)
             <div class="mt-3">
-                <a href="{{ $videojuego->url_iso }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-info">Ir a plataforma del juego ↗</a>
+                <a href="{{ $videojuego->url_iso }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-info">Ir al sitio oficial ↗</a>
             </div>
         @endif
         <div class="d-flex flex-wrap gap-2 mt-3">@foreach($videojuego->plataformas as $plataforma)<span class="badge text-bg-dark border border-secondary-subtle">{{ $plataforma->nombre }}</span>@endforeach</div>

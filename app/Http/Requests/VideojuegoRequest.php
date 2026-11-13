@@ -34,7 +34,7 @@ class VideojuegoRequest extends FormRequest
             'tipo_proyecto' => ['required', 'string', 'in:crack/modificación,ROM,imagen ISO,repack,port o adaptación,emulación,reconstrucción/ingeniería inversa,preservación digital,otro'],
             'advertencia' => ['required', 'string', 'max:3000'],
             'fecha_lanzamiento' => ['nullable', 'date'],
-            'url_iso' => ['nullable', 'url', 'max:2048'],
+            'url_iso' => ['nullable', 'regex:/^https?:\/\//', 'max:2048'],
             'categoria_id' => ['required', 'integer', 'exists:categorias,id'],
             'plataformas' => ['required', 'array', 'min:1'],
             'plataformas.*' => ['integer', 'distinct', 'exists:plataformas,id'],

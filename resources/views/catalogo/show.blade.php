@@ -25,7 +25,7 @@
             <p class="lead gv-muted">{{ $videojuego->descripcion }}</p>
             @if($videojuego->url_iso)
                 <div class="my-3">
-                    <a href="{{ $videojuego->url_iso }}" target="_blank" rel="noopener noreferrer" class="btn btn-cyan w-100">Ir a plataforma del juego ↗</a>
+                    <a href="{{ $videojuego->url_iso }}" target="_blank" rel="noopener noreferrer" class="btn btn-cyan w-100">Ir al sitio oficial ↗</a>
                 </div>
             @endif
             <div class="gv-warning my-4">{{ $videojuego->advertencia }}</div>
