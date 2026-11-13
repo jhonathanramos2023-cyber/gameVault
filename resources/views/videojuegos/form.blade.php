@@ -31,7 +31,15 @@
         </div>
     @endif
 
-    <form class="gv-panel" method="POST" action="{{ $editando ? route('videojuegos.update', $videojuego) : route('videojuegos.store') }}" enctype="multipart/form-data">
+    @if($editando && !auth()->user()->esAdministrador() && $videojuego->estado !== 'borrador')
+        <div class="gv-panel mb-4">
+            <div class="alert alert-warning">
+                Esta ficha está en revisión o publicada; solo el administrador puede devolverla a borrador para editar.
+            </div>
+        </div>
+    @endif
+
+    <form class="gv-panel" method="POST" action="{{ $editando ? route('videojuegos.update', $videojuego) : route('videojuegos.store') }}" enctype="multipart/form-data" {{ $editando && !auth()->user()->esAdministrador() && $videojuego->estado !== 'borrador' ? 'onsubmit="return false;"' : '' }}>
         @csrf
         @if($editando) @method('PUT') @endif
         <div class="row g-3">
@@ -62,7 +70,7 @@
             @endif
         </div>
         <div class="d-flex flex-wrap gap-2 mt-4">
-            <button class="btn btn-cyan" type="submit">{{ $editando ? 'Guardar cambios' : 'Crear borrador' }}</button>
+            <button class="btn btn-cyan" type="submit" {{ $editando && !auth()->user()->esAdministrador() && $videojuego->estado !== 'borrador' ? 'disabled' : '' }}>{{ $editando ? 'Guardar cambios' : 'Crear borrador' }}</button>
             @if($editando)<a class="btn btn-outline-light" href="{{ route('videojuegos.show', $videojuego) }}">Ver ficha</a>@endif
         </div>
     </form>

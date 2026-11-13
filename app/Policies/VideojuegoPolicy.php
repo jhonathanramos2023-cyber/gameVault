@@ -37,6 +37,14 @@ class VideojuegoPolicy
         );
     }
 
+    public function viewEdit(User $user, Videojuego $videojuego): bool
+    {
+        return $user->activo && (
+            $user->esAdministrador()
+            || ($user->rol === 'colaborador' && $videojuego->user_id === $user->id)
+        );
+    }
+
     public function delete(User $user, Videojuego $videojuego): bool
     {
         return $user->activo && $user->esAdministrador();

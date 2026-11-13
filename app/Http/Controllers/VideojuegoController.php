@@ -74,7 +74,7 @@ class VideojuegoController extends Controller
 
     public function edit(Videojuego $videojuego)
     {
-        Gate::authorize('update', $videojuego);
+        Gate::authorize('viewEdit', $videojuego);
         $videojuego->load(['plataformas', 'imagenes', 'referencias']);
 
         return view('videojuegos.form', [
