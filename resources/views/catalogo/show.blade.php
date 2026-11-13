@@ -10,7 +10,10 @@
             @if ($videojuego->imagenes->isNotEmpty())
                 <div class="gv-panel">
                     @foreach ($videojuego->imagenes as $imagen)
-                        <img class="detail-image mb-3" src="{{ \Illuminate\Support\Facades\Storage::disk(config('gamevault.image_disk'))->url($imagen->ruta) }}" alt="{{ $imagen->texto_alternativo }}">
+                        <div>
+                            <img class="detail-image mb-3" src="{{ \Illuminate\Support\Facades\Storage::disk(config('gamevault.image_disk'))->url($imagen->ruta) }}" alt="{{ $imagen->texto_alternativo }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                            <div class="gv-panel p-3 text-center" style="display:none">{{ $imagen->texto_alternativo }}</div>
+                        </div>
                     @endforeach
                 </div>
             @else
