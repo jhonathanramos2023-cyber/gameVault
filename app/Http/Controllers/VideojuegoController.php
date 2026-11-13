@@ -126,7 +126,7 @@ class VideojuegoController extends Controller
 
         $videojuego->update(['estado' => 'en_revision']);
 
-        return back()->with('success', 'Ficha enviada a revisión.');
+        return redirect()->route('videojuegos.index')->with('success', 'Ficha enviada a revisión.');
     }
 
     public function publicar(Videojuego $videojuego)
