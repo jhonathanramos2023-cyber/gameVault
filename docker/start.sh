@@ -9,11 +9,15 @@ mkdir -p storage/framework/cache
 mkdir -p storage/framework/sessions
 mkdir -p storage/framework/views
 mkdir -p storage/logs
+mkdir -p storage/app/public/videojuegos
 chmod -R 775 storage bootstrap/cache
 
 # Crear enlace simbólico de storage
 echo "Creando enlace simbólico de storage..."
 php artisan storage:link --force
+
+# Asegurar que public/storage tenga permisos correctos
+chmod -R 775 public/storage
 
 # Ajustar puerto de Apache antes de migrar
 echo "Configurando puerto de Apache..."
@@ -42,7 +46,7 @@ php artisan view:cache
 
 # Asegurar permisos después de caché
 echo "Ajustando permisos de storage..."
-chown -R www-data:www-data storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache public/storage
 
 echo "=== Iniciando Apache en puerto $PORT ==="
 apache2-foreground
