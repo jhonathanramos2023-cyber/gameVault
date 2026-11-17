@@ -14,7 +14,7 @@ class ImagenVideojuego extends Model
 
     protected $table = 'imagenes_videojuego';
 
-    protected $fillable = ['videojuego_id', 'ruta', 'texto_alternativo', 'orden'];
+    protected $fillable = ['videojuego_id', 'ruta', 'texto_alternativo', 'orden', 'tipo'];
 
     public function videojuego(): BelongsTo
     {

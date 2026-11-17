@@ -92,7 +92,7 @@ class RecorridoTest extends TestCase
                 'advertencia' => 'Advertencia',
                 'categoria_id' => $categoria->id,
                 'plataformas' => [$plataforma->id],
-                'imagenes' => [\Illuminate\Http\UploadedFile::fake()->image('test.png')],
+                'imagen_urls' => ['https://example.com/test.png'],
             ])->assertRedirect();
 
         $videojuego = Videojuego::first();
@@ -129,7 +129,7 @@ class RecorridoTest extends TestCase
                 'advertencia' => 'Advertencia',
                 'categoria_id' => $categoria->id,
                 'plataformas' => [$plataforma->id],
-                'imagenes' => [\Illuminate\Http\UploadedFile::fake()->image('test.png')],
+                'imagen_urls' => ['https://example.com/test.png'],
             ])->assertRedirect();
 
         $videojuego = Videojuego::first();

@@ -132,7 +132,7 @@ class DatabaseSeeder extends Seeder
                 Storage::disk(config('gamevault.image_disk'))->put($ruta, $svg);
                 ImagenVideojuego::updateOrCreate(
                     ['videojuego_id' => $videojuego->id, 'ruta' => $ruta],
-                    ['texto_alternativo' => $texto, 'orden' => 0]
+                    ['texto_alternativo' => $texto, 'orden' => 0, 'tipo' => 'archivo']
                 );
 
                 Referencia::updateOrCreate(

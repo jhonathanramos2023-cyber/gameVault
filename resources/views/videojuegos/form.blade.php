@@ -62,10 +62,37 @@
 
             @if(!$editando)
                 <div class="col-12">
-                    <label class="form-label" for="imagenes">Portada y otras imágenes <span class="gv-muted">(JPG, PNG o WEBP; máximo 2 MB cada una)</span></label>
-                    <input id="imagenes" name="imagenes[]" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple required class="form-control" data-image-preview>
-                    <div class="row g-3 mt-1" data-preview-grid aria-live="polite"></div>
-                    <div class="form-text text-light-emphasis">Selecciona al menos una imagen. La de menor orden se usará como portada. No subas juegos, instaladores, ROM ni archivos ejecutables.</div>
+                    <label class="form-label">Portada y otras imágenes</label>
+                    
+                    <ul class="nav nav-tabs mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-archivo-tab" data-bs-toggle="tab" data-bs-target="#tab-archivo" type="button" role="tab">Subir archivos</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-url-tab" data-bs-toggle="tab" data-bs-target="#tab-url" type="button" role="tab">Desde URL</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tab-archivo" role="tabpanel">
+                            <label class="form-label" for="imagenes">Subir archivos <span class="gv-muted">(JPG, PNG o WEBP; máximo 2 MB cada una)</span></label>
+                            <input id="imagenes" name="imagenes[]" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple class="form-control" data-image-preview>
+                            <div class="row g-3 mt-1" data-preview-grid aria-live="polite"></div>
+                            <div class="form-text text-light-emphasis">Selecciona al menos una imagen. La de menor orden se usará como portada. No subas juegos, instaladores, ROM ni archivos ejecutables.</div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="tab-url" role="tabpanel">
+                            <label class="form-label" for="imagen_urls">URLs de imágenes <span class="gv-muted">(http:// o https://)</span></label>
+                            <div id="url-inputs-container">
+                                <div class="input-group mb-2">
+                                    <input type="url" name="imagen_urls[]" class="form-control" placeholder="https://ejemplo.com/imagen.jpg" required>
+                                    <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">×</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-info mt-2" onclick="addUrlInput()">+ Agregar otra URL</button>
+                            <div class="form-text text-light-emphasis mt-2">Agrega URLs de imágenes externas. La de menor orden se usará como portada.</div>
+                        </div>
+                    </div>
                 </div>
             @endif
         </div>
@@ -122,3 +149,18 @@
         </form>
     @endif
 @endsection
+
+@push('scripts')
+<script>
+function addUrlInput() {
+    const container = document.getElementById('url-inputs-container');
+    const newInput = document.createElement('div');
+    newInput.className = 'input-group mb-2';
+    newInput.innerHTML = `
+        <input type="url" name="imagen_urls[]" class="form-control" placeholder="https://ejemplo.com/imagen.jpg" required>
+        <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">×</button>
+    `;
+    container.appendChild(newInput);
+}
+</script>
+@endpush

@@ -201,7 +201,7 @@ class GameVaultTest extends TestCase
             'categoria_id' => $categoria->id,
             'estado' => 'borrador',
         ]);
-        $imagen = ImagenVideojuego::factory()->create(['videojuego_id' => $videojuegoAjeno->id]);
+        $imagen = ImagenVideojuego::factory()->create(['videojuego_id' => $videojuegoAjeno->id, 'tipo' => 'archivo']);
         $referencia = Referencia::factory()->create(['videojuego_id' => $videojuegoAjeno->id]);
 
         $this->actingAs($colaborador)
@@ -274,7 +274,7 @@ class GameVaultTest extends TestCase
             'user_id' => $otro->id,
             'categoria_id' => $categoria->id,
         ]);
-        $imagenAjena = ImagenVideojuego::factory()->create(['videojuego_id' => $videojuegoAjeno->id]);
+        $imagenAjena = ImagenVideojuego::factory()->create(['videojuego_id' => $videojuegoAjeno->id, 'tipo' => 'archivo']);
         $referenciaAjena = Referencia::factory()->create(['videojuego_id' => $videojuegoAjeno->id]);
 
         $this->actingAs($colaborador)
@@ -408,6 +408,7 @@ class GameVaultTest extends TestCase
         $imagen = \App\Models\ImagenVideojuego::factory()->create([
             'videojuego_id' => $videojuego->id,
             'ruta' => 'videojuegos/1/test.png',
+            'tipo' => 'archivo',
         ]);
 
         $this->actingAs($colaborador)
@@ -520,6 +521,7 @@ class GameVaultTest extends TestCase
         \App\Models\ImagenVideojuego::factory()->create([
             'videojuego_id' => $videojuego->id,
             'ruta' => 'videojuegos/1/test.png',
+            'tipo' => 'archivo',
         ]);
 
         // Admin devuelve la ficha

@@ -20,7 +20,7 @@
     <div class="row g-3 mb-4">
         @foreach($videojuego->imagenes as $imagen)
             <div class="col-6 col-lg-4">
-                <img class="detail-image" src="{{ \Illuminate\Support\Facades\Storage::disk(config('gamevault.image_disk'))->url($imagen->ruta) }}" alt="{{ $imagen->texto_alternativo }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                <img class="detail-image" src="{{ $imagen->tipo === 'url' ? $imagen->ruta : \Illuminate\Support\Facades\Storage::disk(config('gamevault.image_disk'))->url($imagen->ruta) }}" alt="{{ $imagen->texto_alternativo }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                 <div class="gv-panel p-3 text-center" style="display:none">{{ $imagen->texto_alternativo }}</div>
             </div>
         @endforeach

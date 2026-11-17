@@ -38,8 +38,10 @@ class VideojuegoRequest extends FormRequest
             'categoria_id' => ['required', 'integer', 'exists:categorias,id'],
             'plataformas' => ['required', 'array', 'min:1'],
             'plataformas.*' => ['integer', 'distinct', 'exists:plataformas,id'],
-            'imagenes' => [$this->isMethod('POST') ? 'required' : 'sometimes', 'array', 'min:1', 'max:12'],
+            'imagenes' => [$this->isMethod('POST') ? 'required_without:imagen_urls' : 'sometimes', 'array', 'min:1', 'max:12'],
             'imagenes.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'imagen_urls' => [$this->isMethod('POST') ? 'required_without:imagenes' : 'sometimes', 'array', 'min:1', 'max:12'],
+            'imagen_urls.*' => ['required', 'url:http,https', 'max:2048'],
             'textos_alternativos' => ['nullable', 'array'],
             'textos_alternativos.*' => ['nullable', 'string', 'max:255'],
         ];

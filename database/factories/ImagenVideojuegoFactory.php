@@ -22,6 +22,7 @@ class ImagenVideojuegoFactory extends Factory
             'ruta' => 'placeholders/ficha.svg',
             'texto_alternativo' => 'Ilustración generada para una ficha de GameVault',
             'orden' => 0,
+            'tipo' => 'archivo',
         ];
     }
 }

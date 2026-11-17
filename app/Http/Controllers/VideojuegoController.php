@@ -47,10 +47,11 @@ class VideojuegoController extends Controller
     {
         $datos = $request->validated();
         $plataformas = $datos['plataformas'];
-        $imagenes = $datos['imagenes'];
+        $imagenes = $datos['imagenes'] ?? [];
+        $imagenUrls = $datos['imagen_urls'] ?? [];
         $alternativos = $datos['textos_alternativos'] ?? [];
         unset($datos['plataformas']);
-        unset($datos['imagenes'], $datos['textos_alternativos']);
+        unset($datos['imagenes'], $datos['imagen_urls'], $datos['textos_alternativos']);
 
         $videojuego = auth()->user()->videojuegos()->create([
             ...$datos,
@@ -59,7 +60,14 @@ class VideojuegoController extends Controller
             'advertencia' => $datos['advertencia'] ?: config('gamevault.advertencia'),
         ]);
         $videojuego->plataformas()->sync($plataformas);
-        $this->guardarImagenes($videojuego, $imagenes, $alternativos);
+        
+        if (!empty($imagenes)) {
+            $this->guardarImagenes($videojuego, $imagenes, $alternativos);
+        }
+        
+        if (!empty($imagenUrls)) {
+            $this->guardarImagenesDesdeUrls($videojuego, $imagenUrls, $alternativos);
+        }
 
         return redirect()->route('videojuegos.edit', $videojuego)->with('success', 'Borrador guardado. Puedes agregar más imágenes o completar las referencias.');
     }
@@ -190,6 +198,23 @@ class VideojuegoController extends Controller
                 'ruta' => $ruta,
                 'texto_alternativo' => $texto ?: $videojuego->titulo.' — imagen '.($indice + 1),
                 'orden' => min(65535, $orden + $indice),
+                'tipo' => 'archivo',
+            ]);
+        }
+    }
+
+    /** Guarda imágenes desde URLs externas. */
+    private function guardarImagenesDesdeUrls(Videojuego $videojuego, array $urls, array $alternativos): void
+    {
+        $orden = (int) ($videojuego->imagenes()->max('orden') ?? -1) + 1;
+
+        foreach ($urls as $indice => $url) {
+            $texto = trim((string) ($alternativos[$indice] ?? ''));
+            $videojuego->imagenes()->create([
+                'ruta' => $url,
+                'texto_alternativo' => $texto ?: $videojuego->titulo.' — imagen '.($indice + 1),
+                'orden' => min(65535, $orden + $indice),
+                'tipo' => 'url',
             ]);
         }
     }

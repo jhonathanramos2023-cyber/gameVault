@@ -73,7 +73,7 @@
                         <article class="card gv-card tilt-card">
                             <a href="{{ route('catalogo.show', $videojuego->slug) }}" class="cover-frame" aria-label="Ver ficha de {{ $videojuego->titulo }}">
                                 @if ($portada)
-                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk(config('gamevault.image_disk'))->url($portada->ruta) }}" alt="{{ $portada->texto_alternativo }}">
+                                    <img src="{{ $portada->tipo === 'url' ? $portada->ruta : \Illuminate\Support\Facades\Storage::disk(config('gamevault.image_disk'))->url($portada->ruta) }}" alt="{{ $portada->texto_alternativo }}">
                                 @else
                                     <span class="cover-fallback">GV / ARCHIVO</span>
                                 @endif
