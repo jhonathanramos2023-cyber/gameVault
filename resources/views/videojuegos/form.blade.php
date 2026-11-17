@@ -129,13 +129,43 @@
                 @if(auth()->user()->esAdministrador() || $videojuego->estado === 'borrador')
                     <form method="POST" action="{{ route('imagenes.store', $videojuego) }}" enctype="multipart/form-data" class="border-top border-secondary-subtle pt-3">
                         @csrf
-                        <label class="form-label" for="mas-imagenes">Agregar imágenes (JPG, PNG o WEBP; máximo 2 MB cada una)</label>
-                        <div class="row g-2 align-items-end">
-                            <div class="col-12 col-md-8"><input id="mas-imagenes" name="imagenes[]" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple required class="form-control" data-image-preview></div>
-                            <div class="col-12 col-md-4"><label class="form-label" for="orden">Orden inicial</label><input id="orden" name="orden" type="number" min="0" value="{{ $videojuego->imagenes->max('orden') + 1 }}" class="form-control"></div>
+                        <label class="form-label">Agregar imágenes</label>
+                        
+                        <ul class="nav nav-tabs mb-3" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="tab-edit-archivo-tab" data-bs-toggle="tab" data-bs-target="#tab-edit-archivo" type="button" role="tab">Subir archivos</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-edit-url-tab" data-bs-toggle="tab" data-bs-target="#tab-edit-url" type="button" role="tab">Desde URL</button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="tab-edit-archivo" role="tabpanel">
+                                <label class="form-label" for="mas-imagenes">Subir archivos <span class="gv-muted">(JPG, PNG o WEBP; máximo 2 MB cada una)</span></label>
+                                <div class="row g-2 align-items-end">
+                                    <div class="col-12 col-md-8"><input id="mas-imagenes" name="imagenes[]" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple class="form-control" data-image-preview></div>
+                                    <div class="col-12 col-md-4"><label class="form-label" for="orden">Orden inicial</label><input id="orden" name="orden" type="number" min="0" value="{{ $videojuego->imagenes->max('orden') + 1 }}" class="form-control"></div>
+                                </div>
+                                <div class="row g-3 mt-1" data-preview-grid aria-live="polite"></div>
+                                <button class="btn btn-outline-info btn-sm mt-3" type="submit">Cargar imágenes</button>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="tab-edit-url" role="tabpanel">
+                                <label class="form-label" for="imagen_urls">URLs de imágenes <span class="gv-muted">(http:// o https://)</span></label>
+                                <div id="url-inputs-container-edit">
+                                    <div class="input-group mb-2">
+                                        <input type="url" name="imagen_urls[]" class="form-control" placeholder="https://ejemplo.com/imagen.jpg">
+                                        <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">×</button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-info mt-2" onclick="addUrlInputEdit()">+ Agregar otra URL</button>
+                                <div class="row g-2 align-items-end mt-3">
+                                    <div class="col-12 col-md-8"><label class="form-label" for="orden">Orden inicial</label><input id="orden_url" name="orden" type="number" min="0" value="{{ $videojuego->imagenes->max('orden') + 1 }}" class="form-control"></div>
+                                    <div class="col-12 col-md-4"><button class="btn btn-outline-info btn-sm" type="submit">Agregar URLs</button></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="row g-3 mt-1" data-preview-grid aria-live="polite"></div>
-                        <button class="btn btn-outline-info btn-sm mt-3" type="submit">Cargar imágenes</button>
                     </form>
                 @endif
             </section>
@@ -158,6 +188,17 @@ function addUrlInput() {
     newInput.className = 'input-group mb-2';
     newInput.innerHTML = `
         <input type="url" name="imagen_urls[]" class="form-control" placeholder="https://ejemplo.com/imagen.jpg" required>
+        <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">×</button>
+    `;
+    container.appendChild(newInput);
+}
+
+function addUrlInputEdit() {
+    const container = document.getElementById('url-inputs-container-edit');
+    const newInput = document.createElement('div');
+    newInput.className = 'input-group mb-2';
+    newInput.innerHTML = `
+        <input type="url" name="imagen_urls[]" class="form-control" placeholder="https://ejemplo.com/imagen.jpg">
         <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">×</button>
     `;
     container.appendChild(newInput);

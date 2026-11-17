@@ -17,20 +17,39 @@ class ImagenController extends Controller
         
         $datos = $request->validated();
         $orden = (int) ($datos['orden'] ?? ($videojuego->imagenes()->max('orden') + 1));
+        $imagenes = $datos['imagenes'] ?? [];
+        $imagenUrls = $datos['imagen_urls'] ?? [];
+        $alternativos = $datos['textos_alternativos'] ?? [];
 
-        foreach ($datos['imagenes'] as $indice => $archivo) {
-            $ruta = $archivo->store('videojuegos/'.$videojuego->id, config('gamevault.image_disk'));
-            if (! $ruta) {
-                throw new RuntimeException('No se pudo guardar una de las imágenes.');
+        if (!empty($imagenes)) {
+            foreach ($imagenes as $indice => $archivo) {
+                $ruta = $archivo->store('videojuegos/'.$videojuego->id, config('gamevault.image_disk'));
+                if (! $ruta) {
+                    throw new RuntimeException('No se pudo guardar una de las imágenes.');
+                }
+
+                $alternativo = trim((string) ($alternativos[$indice] ?? ''));
+                ImagenVideojuego::create([
+                    'videojuego_id' => $videojuego->id,
+                    'ruta' => $ruta,
+                    'texto_alternativo' => $alternativo ?: $videojuego->titulo.' — imagen '.($indice + 1),
+                    'orden' => min(65535, $orden + $indice),
+                    'tipo' => 'archivo',
+                ]);
             }
+        }
 
-            $alternativo = trim((string) ($datos['textos_alternativos'][$indice] ?? ''));
-            ImagenVideojuego::create([
-                'videojuego_id' => $videojuego->id,
-                'ruta' => $ruta,
-                'texto_alternativo' => $alternativo ?: $videojuego->titulo.' — imagen '.($indice + 1),
-                'orden' => min(65535, $orden + $indice),
-            ]);
+        if (!empty($imagenUrls)) {
+            foreach ($imagenUrls as $indice => $url) {
+                $alternativo = trim((string) ($alternativos[$indice] ?? ''));
+                ImagenVideojuego::create([
+                    'videojuego_id' => $videojuego->id,
+                    'ruta' => $url,
+                    'texto_alternativo' => $alternativo ?: $videojuego->titulo.' — imagen '.($indice + 1),
+                    'orden' => min(65535, $orden + $indice),
+                    'tipo' => 'url',
+                ]);
+            }
         }
 
         return back()->with('success', 'Imágenes cargadas correctamente.');
@@ -42,7 +61,9 @@ class ImagenController extends Controller
         Gate::authorize('update', $videojuego);
 
         try {
-            Storage::disk(config('gamevault.image_disk'))->delete($imagen->ruta);
+            if ($imagen->tipo === 'archivo') {
+                Storage::disk(config('gamevault.image_disk'))->delete($imagen->ruta);
+            }
             $imagen->delete();
 
             return back()->with('success', 'Imagen eliminada.');
