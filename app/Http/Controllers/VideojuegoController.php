@@ -21,6 +21,10 @@ class VideojuegoController extends Controller
             $consulta->where('user_id', auth()->id());
         }
 
+        if ($estado = request()->query('estado')) {
+            $consulta->where('estado', $estado);
+        }
+
         if ($busqueda = trim((string) request()->query('q'))) {
             $patron = '%'.$busqueda.'%';
             $consulta->where(function ($q) use ($patron): void {
