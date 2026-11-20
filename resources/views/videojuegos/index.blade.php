@@ -44,7 +44,8 @@
                                         <form method="POST" action="{{ route('videojuegos.devolver', $videojuego) }}" class="d-inline" onsubmit="return confirm('¿Devolver esta ficha a borrador?')">@csrf @method('PATCH')<button class="btn btn-sm btn-outline-warning" type="submit">Devolver</button></form>
                                     @endif
                                     <form method="POST" action="{{ route('videojuegos.destroy', $videojuego) }}" class="d-inline" onsubmit="return confirm('¿Eliminar esta ficha, todas sus imágenes almacenadas y sus referencias? Esta acción no se puede deshacer.')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button></form>
-                                @elseif($videojuego->estado === 'borrador' && $videojuego->imagenes->count() > 0)
+                                @endif
+                                @if($videojuego->estado === 'borrador' && $videojuego->imagenes->count() > 0)
                                     <form method="POST" action="{{ route('videojuegos.enviar-revision', $videojuego) }}" class="d-inline" onsubmit="return confirm('¿Enviar esta ficha a revisión?')">@csrf <button class="btn btn-sm btn-outline-success" type="submit">Revisión</button></form>
                                 @endif
                             </td>
