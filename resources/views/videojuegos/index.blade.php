@@ -12,13 +12,10 @@
                 <button class="nav-link {{ !request()->query('estado') || request()->query('estado') == 'borrador' ? 'active' : '' }}" onclick="window.location.href='{{ route('videojuegos.index', ['estado' => 'borrador']) }}'" type="button" role="tab">Borradores</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link {{ request()->query('estado') == 'en_revision' ? 'active' : '' }}" onclick="window.location.href='{{ route('videojuegos.index', ['estado' => 'en_revision']) }}'" type="button" role="tab">En revisión</button>
+                <button class="nav-link {{ request()->query('estado') == 'en_revision' ? 'active' : '' }}" onclick="window.location.href='{{ route('videojuegos.index', ['estado' => 'en_revision']) }}'" type="button" role="tab">Revisión</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link {{ request()->query('estado') == 'publicado' ? 'active' : '' }}" onclick="window.location.href='{{ route('videojuegos.index', ['estado' => 'publicado']) }}'" type="button" role="tab">Publicados</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link {{ !request()->query('estado') ? 'active' : '' }}" onclick="window.location.href='{{ route('videojuegos.index') }}" type="button" role="tab">Todos</button>
+                <button class="nav-link {{ request()->query('estado') == 'publicado' ? 'active' : '' }}" onclick="window.location.href='{{ route('videojuegos.index', ['estado' => 'publicado']) }}'" type="button" role="tab">Publicación</button>
             </li>
         </ul>
     @endif
